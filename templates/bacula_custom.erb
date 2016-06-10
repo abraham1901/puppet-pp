@@ -1,0 +1,53 @@
+Schedule {
+    Name = "WeeklyCycle_"
+    Run = Level=Full sun at 03:15
+    Run = Level=Incremental on 1-31 at 03:15
+}
+
+Schedule {
+    Name = "daily-schedule510"
+    Run = Level=Full sun at 05:10
+    Run = Level=Incremental on 1-31 at 05:10
+}
+
+Schedule {
+    Name = "daily-schedule110"
+#    Run = Level=Full sun at 01:10
+    Run = Level=Full on 1-31 at 01:10
+}
+
+
+Schedule {
+    Name = "daily-schedule131"
+#    Run = Level=Full sun at 01:10
+    Run = Level=Full on 1-31 at 01:31
+}
+
+Schedule {
+    Name = "daily-schedule200"
+#    Run = Level=Full sun at 01:10
+    Run = Level=Full on 1-31 at 02:00
+}
+
+Schedule {
+    Name = "daily-schedule300"
+#    Run = Level=Full sun at 01:10
+    Run = Level=Full on 1-31 at 03:00
+}
+
+JobDefs {
+  Name = "DefaultJob"
+  Type = Backup
+  Schedule = "WeeklyCycle_"
+  Storage = "bacula.desert.ru:storage:default"
+  Messages = "bacula.desert.ru:messages:standard"
+  Pool     = "bacula.desert.ru:pool:default"
+  Full Backup Pool = "bacula.desert.ru:pool:default.full"
+  Incremental Backup Pool = "bacula.desert.ru:pool:default.incremental"
+  Differential Backup Pool = "bacula.desert.ru:pool:default.differential"
+  Priority = 10
+  Write Bootstrap = "/var/lib/bacula/%c.bsr"
+  Rerun Failed Levels = no
+}
+
+
