@@ -1,10 +1,11 @@
 class pp::backup (
-  $mysql          = false,
-  $bacula_client  = true,
-  $director_password, 
+  $mysql            = false,
+  $bacula_client    = true,
+  $backup_files     = undef,
+  $bacula_schedule  = "daily-schedule200",
+  $director_password,
   $director_server,
   $storage_server,
-  $backup_files = undef,
 ) {
   if $bacula_client {
 
@@ -16,7 +17,7 @@ class pp::backup (
     }
 
     @@bacula::client::config { $::fqdn:
-      client_schedule   => 'daily-schedule200',
+      client_schedule   => $bacula_schedule,
       director_password => $director_password,
       director_server   => $director_server,
       fileset           => "${fqdn}_files",

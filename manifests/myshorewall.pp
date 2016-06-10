@@ -1,7 +1,8 @@
 class pp::myshorewall (
   $shorewall_test = true,
-  $mywhitelists = [ "net:${whitelists} all" ],
   $options    = 'tcpflags,blacklist,nosmurfs',
+  $zone       = 'net',
+  $mywhitelists = [ "${zone}:${whitelists} all" ],
   $drops,
   $tmp_interface = false,
 ) {
@@ -18,6 +19,7 @@ class pp::myshorewall (
 
   class { 'pp::virtual_shorewall':
     interface  => $interface,
+    zone       => $zone,
     options     => $options,
   }
 
@@ -32,7 +34,7 @@ class pp::myshorewall (
 
   if $shorewall_test {
     cron { 'shorewall_test':
-      command => "/usr/sbin/service shorewall stop",
+      command => "shorewall clear",
       user    => root,
       minute  => '*',
       hour    => '*',

@@ -1,6 +1,7 @@
 class pp::virtual_shorewall (
   $startup    = '1',
   $interface  = [ 'eth0' ],
+  $zone       = 'net',
   $options    = 'tcpflags,blacklist,nosmurfs',
 ) {
 
@@ -13,18 +14,18 @@ class pp::virtual_shorewall (
   # 'LOG':  value => 'debug';
   #}
 
-  shorewall::zone {'net':
+  shorewall::zone {$zone:
     type => 'ipv4';
   }
 
   shorewall::rule_section { 'NEW':
-    order => 100;
+    order => 300;
   }
 
   $interface.each |$iface| {
     shorewall::interface { $iface:
-      zone    => 'net',
-      rfc1918  => true,
+      zone    => $zone,
+      rfc1918 => true,
       options => $options;
     }
   }
@@ -34,17 +35,17 @@ class pp::virtual_shorewall (
       sourcezone              =>      '$FW',
       destinationzone         =>      '$FW',
       policy                  =>      'ACCEPT',
-      order                   =>      100;
+      order                   =>      120;
     'fw-to-net':
       sourcezone              =>      '$FW',
-      destinationzone         =>      'net',
+      destinationzone         =>      $zone,
       policy                  =>      'ACCEPT',
-      order                   =>      110;
+      order                   =>      130;
     'net-to-fw':
-      sourcezone              =>      'net',
+      sourcezone              =>      $zone,
       destinationzone         =>      '$FW',
       policy                  =>      'ACCEPT',
-      order                   =>      120;
+      order                   =>      140;
   }
 
   # default Rules : ICMP
@@ -52,7 +53,7 @@ class pp::virtual_shorewall (
     'allicmp-to-host':
       source      => 'all',
       destination => '$FW',
-      order       => 200,
+      order       => 301,
       action      => 'AllowICMPs/ACCEPT';
   }
 }
