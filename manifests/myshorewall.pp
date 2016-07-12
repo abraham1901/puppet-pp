@@ -2,7 +2,7 @@ class pp::myshorewall (
   $shorewall_test = true,
   $options    = 'tcpflags,blacklist,nosmurfs',
   $zone       = 'net',
-  $mywhitelists = [ "${zone}:${whitelists} all" ],
+  $mywhitelists = [ "all:${whitelists} all" ],
   $drops,
   $tmp_interface = false,
 ) {
