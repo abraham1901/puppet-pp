@@ -1,8 +1,10 @@
+# Bacula backup class
+
 class pp::backup (
   $mysql            = false,
   $bacula_client    = true,
   $backup_files     = undef,
-  $bacula_schedule  = "daily-schedule200",
+  $bacula_schedule  = 'daily-schedule200',
   $director_password,
   $director_server,
   $storage_server,
@@ -20,17 +22,18 @@ class pp::backup (
       client_schedule   => $bacula_schedule,
       director_password => $director_password,
       director_server   => $director_server,
-      fileset           => "${fqdn}_files",
+      fileset           => "${::fqdn}_files",
       storage_server    => $storage_server,
-      run_scripts         => [ {
+      run_scripts       => [{
         'Command'       => '/usr/bin/vbackup 0',
         'RunsOnClient'  => 'Yes',
         'RunsWhen'      => 'Before',
-     }, {
+      },
+      {
         'Command'       => 'rm -Rf /tmp/bacula',
         'RunsOnClient'  => 'Yes',
         'RunsWhen'      => 'After',
-     } ]
+      }]
     }
 
     if $backup_files != undef {
@@ -41,7 +44,7 @@ class pp::backup (
 
     validate_array($tmp_backup_files)
 
-     @@bacula::director::fileset { "${fqdn}_files":
+    @@bacula::director::fileset { "${::fqdn}_files":
       include_files => $tmp_backup_files
     }
   }
@@ -51,15 +54,15 @@ class pp::backup (
   }
 
   file { '/etc/vbackup/backup.0':
-    ensure => directory,
+    ensure  => directory,
     require => Package[ 'vbackup' ],
   }
 
   file { '/etc/vbackup/backup.0/20-dpkg.dpkg':
     ensure  => present,
     content => 'DESTDIR="dpkg/"',
-    mode  => '0600',
-    owner => 'root',
+    mode    => '0600',
+    owner   => 'root',
   }
 
   if $::virtual == 'physical' {
@@ -68,8 +71,8 @@ class pp::backup (
       content => 'DISKS=""
 DESTDIR="mbr/"
 DESTFILE="mbrs.%D1%"',
-      mode  => '0600',
-      owner => 'root',
+      mode    => '0600',
+      owner   => 'root',
     }
   } else {
       file { '/etc/vbackup/backup.0/25-mbr.mbr':
@@ -87,8 +90,8 @@ DESTFILE="mbrs.%D1%"',
 MYUSER=\"root\"
 DATABASES=\"-\"
 DESTDIR=\"mysql/%D1%\"",
-      mode  => '0600',
-      owner => 'root',
+      mode    => '0600',
+      owner   => 'root',
     }
   }
 
@@ -99,8 +102,8 @@ LEVEL=0
 STATEDIR="/var/lib/vbackup/state/tar"
 DESTDIR="fs/%D1%"
 ',
-    mode  => '0600',
-    owner => 'root',
+    mode    => '0600',
+    owner   => 'root',
   }
 
   file { '/etc/vbackup/backup.0/vbackup.conf':
@@ -116,8 +119,8 @@ DESTDIR0=/tmp/bacula/
 # Compress backups? (yes/no)
 COMPRESS="no"
 ',
-    mode  => '0600',
-    owner => 'root',
+    mode    => '0600',
+    owner   => 'root',
   }
 
 

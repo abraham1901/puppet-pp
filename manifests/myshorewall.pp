@@ -1,10 +1,12 @@
+# Shorewall class
+
 class pp::myshorewall (
   $shorewall_test = true,
-  $options    = 'tcpflags,blacklist,nosmurfs',
-  $zone       = 'net',
-  $mywhitelists = [ "all:${whitelists} all" ],
+  $options        = 'tcpflags,blacklist,nosmurfs',
+  $zone           = 'net',
+  $mywhitelists   = [ "all:${::whitelists} all" ],
+  $tmp_interface  = false,
   $drops,
-  $tmp_interface = false,
 ) {
 
   if $tmp_interface {
@@ -18,14 +20,10 @@ class pp::myshorewall (
   }
 
   class { 'pp::virtual_shorewall':
-    interface  => $interface,
-    zone       => $zone,
-    options     => $options,
+    interface => $interface,
+    zone      => $zone,
+    options   => $options,
   }
-
-
-
-#  $whitelists = join($whitelist_address, ",")
 
   class { 'shorewall::blrules':
     whitelists  => $mywhitelists,
@@ -34,14 +32,14 @@ class pp::myshorewall (
 
   if $shorewall_test {
     cron { 'shorewall_test':
-      command => "shorewall clear",
+      command => '/sbin/shorewall clear',
       user    => root,
       minute  => '*',
       hour    => '*',
     }
   } else {
     cron { 'shorewall_test':
-      command => "/usr/sbin/service shorewall status",
+      command => '/usr/sbin/service shorewall status',
       user    => root,
       minute  => '*/10',
       hour    => '*',

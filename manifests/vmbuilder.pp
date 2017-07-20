@@ -43,7 +43,6 @@ define pp::vmbuilder (
                         man ],
 ) {
 
-
   package { 'virtinst':
     ensure => present,
   }
@@ -106,9 +105,8 @@ define pp::vmbuilder (
     path      => ['/usr/bin','/bin','/sbin','/usr/sbin'],
     timeout   => '3000',
     command   => $cmd,
-#    unless    => "test -d $disk_path/$hostname",
+    unless    => "test -d /dev/${vg}/${name}",
     require   => [ Pp::Lv_create[$name], Package['virtinst'] ],
     logoutput => 'true',
   }
-
 }
