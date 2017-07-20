@@ -82,10 +82,8 @@ define pp::web::add_application_server (
         }
       }
     }
-
-    $not_support_msg = "not support php ${version}"
-    
     default: {
+      $not_support_msg = "not support php ${version}"
       warning("Module pp::web::add_application_server ${not_support_msg}")
     }
   }
