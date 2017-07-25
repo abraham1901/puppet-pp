@@ -1,7 +1,8 @@
 #Deploy php-fpm abstract class
 class pp::web::mynginxphp  (
-  $packages = [],
-  $static_packages =  [
+  $packages         = [],
+  $version          = '5',
+  $static_packages  =  [
       'php5-curl',
       'php5-gd',
       'php-apc',
@@ -9,8 +10,7 @@ class pp::web::mynginxphp  (
       'php5-mcrypt',
       'php5-imap',
       'php5-mysql',
-    ],
-  $version = '5'
+  ],
 ){
 
   $real_packages = $static_packages + $packages
@@ -21,13 +21,19 @@ class pp::web::mynginxphp  (
         php_packages => $real_packages,
       }
     }
+    '5.6': {
+      class { 'nginxphp6::php':
+        php_packages => $real_packages,
+      }
+    }
     '7': {
       class { 'nginxphp7::php':
         php_packages => $real_packages,
       }
     }
     default: {
-      warning("Module pp::web::add_application_server not support php ${version}")
+      $not_support_msg = "not support php ${version}"
+      warning("Module pp::web::add_application_server ${not_support_msg}")
     }
   }
 }

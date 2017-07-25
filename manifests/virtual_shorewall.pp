@@ -1,3 +1,4 @@
+# Virtual shorewall class
 class pp::virtual_shorewall (
   $startup    = '1',
   $interface  = [ 'eth0' ],
