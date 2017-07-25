@@ -74,8 +74,11 @@ d-i netcfg/get_domain string <%= @domain %>
 d-i netcfg/get_nameservers string <%= @dns %>
 d-i netcfg/get_ipaddress string <%= @ip %>
 d-i netcfg/get_netmask string <%= @netmask %>
+<% if @pointopoint -%>
+d-i netcfg/choose_interface select plip
+d-i netcfg/get_pointopoint string <%= @pointopoint %>
+<% end -%>
 d-i netcfg/get_gateway string <%= @gateway %>
-
 tasksel tasksel/first multiselect standard
 d-i pkgsel/include string <%= @pkg.sort.join(" ") %>
 d-i pkgsel/language-packs multiselect en
