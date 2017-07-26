@@ -6,6 +6,7 @@ define pp::vmbuilder (
   $gateway,
   $dns,
   $bridge,
+  $pointopoint = false,
   $domain = 'example.ru',
   $user   = 'example3301',
   $pass   = '$6$nhs9ONjvN$vSoNefH0pshU57VR3di3QABfsd8UzL/TX2njx30V9YO3qmR/kwY8iOyXltas1TbGmn9nwq0vNWR6EFfHIvScI.',  #eezeSh2equaifeifu5l
