@@ -1,0 +1,20 @@
+#! /bin/sh
+
+mails="<%= @admin_mail -%>"
+
+if ! which mail; then
+  echo | mail -s  "$(hostname -f) vulners: mail not installed" "$mails"
+  
+  exit 1
+fi
+
+out=$(/usr/share/vulners/linuxScanner.py)
+if echo "$out" | grep "Total found packages" > /dev/null ; then
+  if ! echo "$out" | grep  "No vulnerabilities found" >> /dev/null ; then
+    echo "$out" | mail -s "$(hostname -f) vulners" "$mails"
+  fi
+else
+  echo | mail -s  "$(hostname -f) linuxScanner.py broken" "$mails"
+  exit 1
+fi
+
