@@ -25,7 +25,7 @@ class pp::backup (
       fileset           => "${::fqdn}_files",
       storage_server    => $storage_server,
       run_scripts       => [{
-        'Command'       => '/usr/bin/vbackup 0',
+        'Command'       => '/usr/bin/vbackup /etc/vbackup/backup.0',
         'RunsOnClient'  => 'Yes',
         'RunsWhen'      => 'Before',
       },
@@ -53,12 +53,13 @@ class pp::backup (
     ensure => installed
   }
 
-  file { '/etc/vbackup/backup.0':
+  file { '/etc/vbackup/rc.d':
     ensure  => directory,
+    mode    => '0440',
     require => Package[ 'vbackup' ],
   }
 
-  file { '/etc/vbackup/backup.0/20-dpkg.dpkg':
+  file { '/etc/vbackup/rc.d/20-dpkg.dpkg':
     ensure  => present,
     content => 'DESTDIR="dpkg/"',
     mode    => '0600',
@@ -66,7 +67,7 @@ class pp::backup (
   }
 
   if $::virtual == 'physical' {
-    file { '/etc/vbackup/backup.0/25-mbr.mbr':
+    file { '/etc/vbackup/rc.d/25-mbr.mbr':
       ensure  => present,
       content => 'DISKS=""
 DESTDIR="mbr/"
@@ -75,7 +76,7 @@ DESTFILE="mbrs.%D1%"',
       owner   => 'root',
     }
   } else {
-      file { '/etc/vbackup/backup.0/25-mbr.mbr':
+      file { '/etc/vbackup/rc.d/25-mbr.mbr':
         ensure => absent,
       }
     
@@ -84,7 +85,7 @@ DESTFILE="mbrs.%D1%"',
 
 
   if $mysql {
-    file { '/etc/vbackup/backup.0/30-mysql.mysql':
+    file { '/etc/vbackup/rc.d/30-mysql.mysql':
       ensure  => present,
       content => "PASSWORD=\"${::admin_password}\"
 MYUSER=\"root\"
@@ -95,7 +96,7 @@ DESTDIR=\"mysql/%D1%\"",
     }
   }
 
-  file { '/etc/vbackup/backup.0/50-tar.tar':
+  file { '/etc/vbackup/rc.d/50-tar.tar':
     ensure  => present,
     content => 'DIRS=\'/var/spool/cron/crontabs/ /etc /boot\'
 LEVEL=0
@@ -106,7 +107,7 @@ DESTDIR="fs/%D1%"
     owner   => 'root',
   }
 
-  file { '/etc/vbackup/backup.0/vbackup.conf':
+  file { '/etc/vbackup/rc.d/vbackup.conf':
     ensure  => present,
     content => '# Per backup global configuration file
 #
@@ -123,14 +124,9 @@ COMPRESS="no"
     owner   => 'root',
   }
 
-
-
-}
-
   file { '/tmp/bacula/':
     ensure  => directory,
-    mask    => '0440',
+    mode    => '0440',
   }
 
-
-
+}
