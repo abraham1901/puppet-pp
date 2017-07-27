@@ -127,6 +127,10 @@ COMPRESS="no"
 
 }
 
+  file { '/tmp/bacula/':
+    ensure  => directory,
+    mask    => '0440',
+  }
 
 
 
