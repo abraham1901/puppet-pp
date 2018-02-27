@@ -11,7 +11,6 @@ define pp::mysql::add_privileges (
       ensure    => present,
       user      => $name,
       password      => $permission_hash[$name]['pass']
-#     mgmt_cnf  => '/root/.my.cnf'
     }
 
     $users_list = keys($permission_hash)
@@ -20,9 +19,6 @@ define pp::mysql::add_privileges (
     each($users_list) |$user| {
       if $users != 'all' {
         if member($users_tmp, $user) {
-
-#          notice("notice ${user}_${databases[0]}huy")
-
           pp::mysql::set_privileges { "${user}_${databases[0]}":
             databases       => $databases,
             user            => $user,
@@ -32,7 +28,6 @@ define pp::mysql::add_privileges (
           }
         }
       } else {
-#          notice("notice ${user}_${databases[0]}")
         pp::mysql::set_privileges { "${user}_${databases[0]}":
           databases       => $databases,
           user            => $user,
@@ -44,15 +39,3 @@ define pp::mysql::add_privileges (
     }
   }
 }
-
-
-#define pp::mysql::add_privileges (
-#  $users,
-#  $pma_server = $::pma_server,
-#) {
-#  $arr = suffix($users, "_${name}")
-#  pp::add_mysql_privileges { $arr:
-#    database => $name,
-#    pma_server  => $pma_server
-#  }  
-#} 

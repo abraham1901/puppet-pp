@@ -20,7 +20,8 @@ class pp::virtual_shorewall (
   }
 
   shorewall::rule_section { 'NEW':
-    order => 300;
+    order => 300,
+    before => Service['shorewall']
   }
 
   $interface.each |$iface| {

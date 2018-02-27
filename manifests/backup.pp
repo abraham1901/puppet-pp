@@ -16,6 +16,7 @@ class pp::backup (
       director_server   => $director_server,
       is_client         => true,
       storage_server    => $storage_server,
+      require           => [ Class['desert::myapt'],  Class['apt::update']],
     }
 
     @@bacula::client::config { $::fqdn:
@@ -94,6 +95,12 @@ DESTDIR=\"mysql/%D1%\"",
       mode    => '0600',
       owner   => 'root',
     }
+
+    file { "/usr/share/vbackup/scripts/mysql":
+      ensure => present,
+      source  => "puppet:///modules/pp/mysql_backup",
+    }
+
   }
 
   file { '/etc/vbackup/rc.d/50-tar.tar':
@@ -118,7 +125,7 @@ DESTDIR="fs/%D1%"
 DESTDIR0=/tmp/bacula/
 
 # Compress backups? (yes/no)
-COMPRESS="no"
+COMPRESS="yes"
 ',
     mode    => '0600',
     owner   => 'root',
