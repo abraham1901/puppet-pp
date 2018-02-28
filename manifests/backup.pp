@@ -16,7 +16,6 @@ class pp::backup (
       director_server   => $director_server,
       is_client         => true,
       storage_server    => $storage_server,
-      require           => [ Class['desert::myapt'],  Class['apt::update']],
     }
 
     @@bacula::client::config { $::fqdn:
@@ -54,13 +53,13 @@ class pp::backup (
     ensure => installed
   }
 
-  file { '/etc/vbackup/rc.d':
+  file { '/etc/vbackup/backup.0':
     ensure  => directory,
     mode    => '0440',
     require => Package[ 'vbackup' ],
   }
 
-  file { '/etc/vbackup/rc.d/20-dpkg.dpkg':
+  file { '/etc/vbackup/backup.0/20-dpkg.dpkg':
     ensure  => present,
     content => 'DESTDIR="dpkg/"',
     mode    => '0600',
@@ -68,7 +67,7 @@ class pp::backup (
   }
 
   if $::virtual == 'physical' {
-    file { '/etc/vbackup/rc.d/25-mbr.mbr':
+    file { '/etc/vbackup/backup.0/25-mbr.mbr':
       ensure  => present,
       content => 'DISKS=""
 DESTDIR="mbr/"
@@ -77,16 +76,15 @@ DESTFILE="mbrs.%D1%"',
       owner   => 'root',
     }
   } else {
-      file { '/etc/vbackup/rc.d/25-mbr.mbr':
+      file { '/etc/vbackup/backup.0/25-mbr.mbr':
         ensure => absent,
       }
     
-  
   }
 
 
   if $mysql {
-    file { '/etc/vbackup/rc.d/30-mysql.mysql':
+    file { '/etc/vbackup/backup.0/30-mysql.mysql':
       ensure  => present,
       content => "PASSWORD=\"${::admin_password}\"
 MYUSER=\"root\"
@@ -95,7 +93,7 @@ DESTDIR=\"mysql/%D1%\"",
       mode    => '0600',
       owner   => 'root',
     }
-
+ 
     file { "/usr/share/vbackup/scripts/mysql":
       ensure => present,
       source  => "puppet:///modules/pp/mysql_backup",
@@ -103,7 +101,7 @@ DESTDIR=\"mysql/%D1%\"",
 
   }
 
-  file { '/etc/vbackup/rc.d/50-tar.tar':
+  file { '/etc/vbackup/backup.0/50-tar.tar':
     ensure  => present,
     content => 'DIRS=\'/var/spool/cron/crontabs/ /etc /boot\'
 LEVEL=0
@@ -114,7 +112,7 @@ DESTDIR="fs/%D1%"
     owner   => 'root',
   }
 
-  file { '/etc/vbackup/rc.d/vbackup.conf':
+  file { '/etc/vbackup/backup.0/vbackup.conf':
     ensure  => present,
     content => '# Per backup global configuration file
 #
